@@ -3,11 +3,14 @@ from tensorflow.contrib import rnn
 
 #import dataset
 data = []
+labels = []
 
 #hyperparameters
 #common
 learning_rate = 0.001
 batch_size = 128
+training_steps = 1000
+display_step = 20
 
 #for cnn
 image_size = 500 * 500
@@ -18,7 +21,7 @@ n_input = 125 * 125 * 64
 n_hidden = 1024
 time_steps = 300
 
-x = tf.placeholder(tf.float32, [None, image_size])
+X = tf.placeholder(tf.float32, [None, time_steps, image_size])
 y = tf.placeholder(tf.float32, [None, image_size])
 
 W = {
@@ -53,7 +56,6 @@ def feed_forward_cnn(x, W, b):
 
     return conv2
 
-X = tf.placeholder(tf.float32, [None, time_steps, n_input])
 
 def feed_forward_rnn(input, W, b):
     input = tf.unstack(input, time_steps, 1)
@@ -66,9 +68,9 @@ def feed_forward_rnn(input, W, b):
 
 def cnn_rnn(X, W, b):
     for i in range(time_steps):
-        feed_forward_cnn(X[i], W, b)
+        feed_forward_cnn(X[:][i], W, b)
 
-    feed_forward_rnn(X, W, b)
+    return feed_forward_rnn(X, W, b)
 
 logits = cnn_rnn(X, W, b)
 prediction = tf.softmax(logits)
@@ -83,3 +85,20 @@ init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
+    current_batch = 0
+
+    for step in range(1, training_steps + 1):
+        batch_x = data[current_batch: current_batch + batch_size]
+        batch_y = labels[current_batch: current_batch + batch_size]
+        current_batch += batch_size
+        if current_batch >= len(data):
+            current_batch = 0
+
+        sess.run(train, {X: batch_x, y: batch_y})
+
+        if step % display_step == 0 or step == 1:
+            loss, acc = sess.run([loss_op, accuracy], {X: batch_x, y: batch_y})
+            print("step ", step, "of ", training_steps, ", loss = ", loss, ", accuracy = ", acc)
+
+
+
