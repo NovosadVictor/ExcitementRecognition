@@ -13,7 +13,7 @@ training_steps = 1000
 display_step = 20
 
 #for cnn
-image_size = 500 * 500
+image_size = 1280 * 720
 h1_size = 64000
 
 #for rnn
@@ -21,8 +21,8 @@ n_input = 125 * 125 * 64
 n_hidden = 1024
 time_steps = 300
 
-X = tf.placeholder(tf.float32, [None, time_steps, image_size])
-y = tf.placeholder(tf.float32, [None, image_size])
+X = tf.placeholder(tf.float32, [time_steps, image_size])
+y = tf.placeholder(tf.float32, [image_size])
 
 W = {
     'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32])),
@@ -36,13 +36,16 @@ b = {
     'out': tf.Variable(tf.random_normal([image_size])),
 }
 
+
 def conv2d(x, W, b, strides=1):
     x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
     x = tf.add(x, b)
     return tf.nn.relu(x)
 
+
 def max_pool(x, k=2):
     return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
 
 def feed_forward_cnn(x, W, b):
 
@@ -66,11 +69,14 @@ def feed_forward_rnn(input, W, b):
 
     return tf.add(tf.matmul(outputs[-1], W['out']), b['out'])
 
-def cnn_rnn(X, W, b):
-    for i in range(time_steps):
-        feed_forward_cnn(X[:][i], W, b)
 
-    return feed_forward_rnn(X, W, b)
+def cnn_rnn(X, W, b):
+    outs_cnn = []
+    for i in range(time_steps):
+        outs_cnn.append(feed_forward_cnn(X[:][i], W, b))
+
+    return feed_forward_rnn(outs_cnn, W, b)
+
 
 logits = cnn_rnn(X, W, b)
 prediction = tf.softmax(logits)
