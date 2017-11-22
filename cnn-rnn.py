@@ -1,38 +1,39 @@
 import tensorflow as tf
 from tensorflow.contrib import rnn
+import pickle
 
 #import dataset
-data = [[[(i + j) % 10 for i in range(200) for j in range(200)], [(i - j) % 10 for i in range(200) for j in range(200)]]]
-labels = [[1, 0]]
+with open('database.pickle', 'rb') as f:
+    train_x, train_y, test_x, test_y = pickle.load(f)
 
 #hyperparameters
 #common
 learning_rate = 0.001
-batch_size = 1
+batch_size = 128
 training_steps = 1000
 display_step = 20
 n_classes = 2
 
 #for cnn
-image_size = 40000
+image_size = 76800 #320x240
 
 #for rnn
-n_input = 25000
-n_hidden = 256
-time_steps = 2
+n_input = 153600 # 80x60x32
+n_hidden = 512
+time_steps = 6
 
 X = tf.placeholder(tf.float32, [None, time_steps, image_size])
 y = tf.placeholder(tf.float32, [None, n_classes])
 
 W = {
-    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32])),
-    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 10])),
+    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 16])),
+    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 32])),
     'out': tf.Variable(tf.random_normal([n_hidden, n_classes])),
 }
 
 b = {
-    'bc1': tf.Variable(tf.random_normal([32])),
-    'bc2': tf.Variable(tf.random_normal([10])),
+    'bc1': tf.Variable(tf.random_normal([16])),
+    'bc2': tf.Variable(tf.random_normal([32])),
     'out': tf.Variable(tf.random_normal([n_classes])),
 }
 
@@ -49,7 +50,7 @@ def max_pool(x, k=2):
 
 def feed_forward_cnn(x, W, b):
 
-    x = tf.reshape(x, [-1, 200, 200, 1])
+    x = tf.reshape(x, [-1, 320, 240, 1])
 
     conv1 = conv2d(x, W['wc1'], b['bc1'])
     conv1 = max_pool(conv1)
@@ -100,10 +101,10 @@ with tf.Session() as sess:
     current_batch = 0
 
     for step in range(1, training_steps + 1):
-        batch_x = data[current_batch: current_batch + batch_size]
-        batch_y = labels[current_batch: current_batch + batch_size]
+        batch_x = train_x[current_batch: current_batch + batch_size]
+        batch_y = train_y[current_batch: current_batch + batch_size]
         current_batch += batch_size
-        if current_batch >= len(data):
+        if current_batch >= len(train_x):
             current_batch = 0
 
         sess.run(train, {X: batch_x, y: batch_y})
@@ -112,6 +113,9 @@ with tf.Session() as sess:
             loss, acc = sess.run([loss_op, accuracy], {X: batch_x, y: batch_y})
             print("prediction", sess.run(prediction, {X: batch_x, y: batch_y}))
             print("step ", step, "of ", training_steps, ", loss = ", loss, ", accuracy = ", acc)
+
+
+    print("Test accuracy is ", sess.run(accuracy, {X: test_x, y: test_y}))
 
 
 
