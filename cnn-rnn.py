@@ -5,6 +5,7 @@ import pickle
 #import dataset
 with open('database.pickle', 'rb') as f:
     train_x, train_y, test_x, test_y = pickle.load(f)
+print(train_x[0])
 
 #hyperparameters
 #common
@@ -27,7 +28,7 @@ y = tf.placeholder(tf.float32, [None, n_classes])
 
 W = {
     'wc1': tf.Variable(tf.random_normal([5, 5, 1, 16])),
-    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 32])),
+    'wc2': tf.Variable(tf.random_normal([5, 5, 16, 32])),
     'out': tf.Variable(tf.random_normal([n_hidden, n_classes])),
 }
 

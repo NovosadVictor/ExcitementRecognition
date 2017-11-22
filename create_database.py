@@ -13,7 +13,7 @@ for i in range(1, 101):
     for j in range(6):
         image = Image.open('./videos_for_project/exam_1/images%06d.png' % (i + j))
         pix = image.load()
-        img_matrix = [[(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)]
+        img_matrix = [(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)
                       for l in range(320)]
         images.append(img_matrix)
     print("step " + str(i) + " of " + str(100))
@@ -26,7 +26,7 @@ for i in range(1, 101):
     for j in range(6):
         image = Image.open('./videos_for_project/exam_2/images%06d.png' % (i + j))
         pix = image.load()
-        img_matrix = [[(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)]
+        img_matrix = [(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)
                       for l in range(320)]
         images.append(img_matrix)
 
@@ -40,7 +40,7 @@ for i in range(1, 41):
     for j in range(6):
         image = Image.open('./videos_for_project/not_1/images%06d.png' % (i + j))
         pix = image.load()
-        img_matrix = [[(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)]
+        img_matrix = [(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)
                       for l in range(320)]
         images.append(img_matrix)
 
@@ -54,7 +54,7 @@ for i in range(1, 41):
     for j in range(6):
         image = Image.open('./videos_for_project/not_2/images%06d.png' % (i + j))
         pix = image.load()
-        img_matrix = [[(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)]
+        img_matrix = [(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)
                       for l in range(320)]
         images.append(img_matrix)
 
@@ -68,7 +68,7 @@ for i in range(1, 41):
     for j in range(6):
         image = Image.open('./videos_for_project/not_3/images%06d.png' % (i + j))
         pix = image.load()
-        img_matrix = [[(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)]
+        img_matrix = [(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)
                       for l in range(320)]
         images.append(img_matrix)
 
@@ -82,7 +82,7 @@ for i in range(1, 41):
     for j in range(6):
         image = Image.open('./videos_for_project/not_4/images%06d.png' % (i + j))
         pix = image.load()
-        img_matrix = [[(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)]
+        img_matrix = [(pix[l,k][0] + pix[l,k][1] + pix[l,k][2]) // 3 for k in range(240)
                       for l in range(320)]
         images.append(img_matrix)
 
